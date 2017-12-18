@@ -67,12 +67,12 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     VectorXd z_pred(3);
     z_pred << rho, phi, rho_dot;
     VectorXd y = z - z_pred;
-    if(y>M_PI)
-    {
-         //  y=y-M_PI;
-        //To pass the RMSE, you should make sure the angle value in y = z - z_pred is normalized between PI and -PI. One thing you could implement is the addition of 2π coupled with its subtraction until the angle is within the desired range.
-        // how to solve it?
-    }
+//    if(y>M_PI)
+//    {
+//         //  y=y-M_PI;
+//        //To pass the RMSE, you should make sure the angle value in y = z - z_pred is normalized between PI and -PI. One thing you could implement is the addition of 2π coupled with its subtraction until the angle is within the desired range.
+//        // how to solve it?
+//    }
 
     MatrixXd Ht = H_.transpose();
     MatrixXd PHt = P_ * Ht;
