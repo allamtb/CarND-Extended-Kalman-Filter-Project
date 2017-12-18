@@ -39,6 +39,8 @@ FusionEKF::FusionEKF() {
             0, 0, 0, 1;
 
     //state covariance matrix P
+    // 借鉴 https://github.com/jeremy-shannon/CarND-Extended-Kalman-Filter-Project/blob/master/src/FusionEKF.cpp
+    // 但是为何P_的值一定为此，不太明确。前面两个1 表示位置信息的确定性强。 后两个1000表示速度信息确定性差。
     ekf_.P_ = MatrixXd(4, 4);
     ekf_.P_ << 1, 0, 0, 0,
             0, 1, 0, 0,
