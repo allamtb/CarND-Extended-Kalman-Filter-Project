@@ -35,26 +35,13 @@ void KalmanFilter::Update(const VectorXd &z) {
     //update the state by using Kalman Filter equations
     VectorXd z_pred = H_ * x_;
     VectorXd y = z - z_pred;
-    MatrixXd Ht = H_.transpose();
-    MatrixXd PHt = P_ * Ht;
-    MatrixXd S = H_ * PHt + R_;
-    MatrixXd Si = S.inverse();
-
-    MatrixXd K = PHt * Si;
-
-    //new estimate
-    x_ = x_ + (K * y);
-    long x_size = x_.size();
-    MatrixXd I = MatrixXd::Identity(x_size, x_size);
-    P_ = (I - K * H_) * P_;
-
-
+    doCalculate(y);
 }
+
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
 
     // used to compute the RMSE later
-
     float rho = sqrt(x_(0) * x_(0) + x_(1) * x_(1));
     float phi = atan2(x_(1), x_(0));
     float rho_dot;
@@ -67,13 +54,15 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     VectorXd z_pred(3);
     z_pred << rho, phi, rho_dot;
     VectorXd y = z - z_pred;
-//    if(y>M_PI)
-//    {
-//         //  y=y-M_PI;
-//        //To pass the RMSE, you should make sure the angle value in y = z - z_pred is normalized between PI and -PI. One thing you could implement is the addition of 2π coupled with its subtraction until the angle is within the desired range.
-//        // how to solve it?
-//    }
+    if (y[1] > M_PI)
+        y[1] -= M_PI * 2;
+    else if (y[1] < -M_PI)
+        y[1] += M_PI * 2;
 
+    doCalculate(y);
+}
+
+void KalmanFilter::doCalculate(const VectorXd &y) {
     MatrixXd Ht = H_.transpose();
     MatrixXd PHt = P_ * Ht;
     MatrixXd S = H_ * PHt + R_;
